@@ -1,0 +1,137 @@
+entity BusinessApplication {
+    id  String required,
+	name String required minlength(3),
+	description String required
+}
+
+entity Partner {
+    id  String required,
+	name String required minlength(3),
+	description String required
+}
+
+entity BusinessApplicationSecurityGroup {
+    id  String required,
+	name String required minlength(3),
+	description String required
+}
+
+entity BusinessApplicationPartner {
+    id  String required,
+	name String required minlength(3),
+	description String required
+}
+
+entity SecurityPermission {
+    id  String required,
+	name String required minlength(3),
+	description String required
+}
+
+entity SecurityRole {
+    id  String required,
+	name String required minlength(3),
+	description String required
+}
+
+entity SecurityGroup {
+    id  String required,
+	name String required minlength(3),
+	description String required
+}
+
+entity Tenant {
+    id String required,
+    tenantId String required,
+    name String required minlength(3),
+    description String required
+}
+
+entity UserSessionContext {
+    id  String required,
+    ip  String required,
+    loginTime Instant required
+}
+
+entity IdpSecurityGroup {
+    id  String required,
+    shortName String required minlength(5),
+    longName String required minlength(5),
+	description String required,
+    businessApplicationSecurityGroup String
+}
+
+entity TenantSecurityGroup {
+    id  String required,
+    shortName String required minlength(5),
+    longName String required minlength(5),
+    businessApplicationPartner String,
+	description String required
+}
+
+entity UserSecurityDetails {
+    id  String required,
+    purpose String required,
+    description String required
+}
+
+/* SecurityRole Relationships */
+relationship ManyToMany {
+  SecurityRole{permissions(name) required} to SecurityPermission
+}
+
+/* SecurityGroup Relationships */
+relationship ManyToMany {
+  SecurityGroup{roles(name) required} to SecurityRole
+}
+
+/* TenantSecurityGroup Relationships */
+relationship ManyToOne {
+  TenantSecurityGroup{partner(name) required} to Partner
+}
+
+relationship ManyToMany {
+  TenantSecurityGroup{tenant(name) required} to Tenant
+}
+
+/* Tenant Relationships */
+relationship ManyToMany {
+  Tenant{subTenants(name)} to Tenant,
+  Tenant{partner(name) required} to Partner
+}
+
+relationship OneToOne {
+  Tenant{parentTenant(name)} to Tenant
+}
+
+/* UserSecurityDetails Relationships */
+relationship ManyToOne {
+  UserSecurityDetails{user(login) required} to User
+}
+
+/* UserSessionContext Relationships */
+relationship ManyToOne {
+  UserSessionContext{user(login) required} to User
+}
+
+relationship ManyToMany {
+  IdpSecurityGroup {tenantSecurityGroup(name) required} to TenantSecurityGroup
+}
+
+/* UserSecurityDetails Relationships */
+relationship ManyToMany {
+  UserSecurityDetails{idpSecurityGroup(shortName) required} to IdpSecurityGroup
+}
+
+relationship ManyToMany {
+  BusinessApplicationSecurityGroup{businessApplication(name) required} to BusinessApplication
+}
+
+relationship ManyToMany {
+  BusinessApplicationSecurityGroup{securityGroup(name) required} to SecurityGroup,
+  IdpSecurityGroup{businessApplicationSecurityGroup(name) required} to BusinessApplicationSecurityGroup
+}
+
+paginate all with pagination
+service all with serviceImpl
+microservice all with securityservice
