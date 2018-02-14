@@ -1,0 +1,12 @@
+entity Dbchangelog {
+	changeId String required,
+    author String required,
+    timestamo Instant required,
+    changeLogClass String required,
+    changeSetMethod String required    
+}
+
+paginate all with pagination
+service all with serviceImpl
+
+microservice all with product
