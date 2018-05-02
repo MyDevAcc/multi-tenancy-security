@@ -10,7 +10,6 @@ entity ApplicationService {
 	description String required
 }
 
-
 entity SecurityPermission {
     id  String required,
 	name String required minlength(3),
@@ -73,6 +72,8 @@ entity LdapSecurityGroup {
 	description String required
 }
 
+/*
+*/
 entity OauthSecurityGroup {
     id  String required,
     shortName String required minlength(5),
