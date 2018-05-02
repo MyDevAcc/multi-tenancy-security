@@ -1,4 +1,4 @@
-entity BusinessApplication {
+entity BusinessApplication (BusnApp) {
     id  String required,
 	name String required minlength(3),
 	description String required
@@ -10,13 +10,19 @@ entity Partner {
 	description String required
 }
 
-entity BusinessApplicationSecurityGroup {
+entity BusinessApplicationSecurityGroup (BusnAppSecGrp) {
     id  String required,
 	name String required minlength(3),
 	description String required
 }
 
-entity BusinessApplicationPartner {
+entity BusinessApplicationPartner (BusnAppPrt) {
+    id  String required,
+	name String required minlength(3),
+	description String required
+}
+
+entity BusinessApplicationTenant (BusnAppTnt) {
     id  String required,
 	name String required minlength(3),
 	description String required
@@ -53,7 +59,7 @@ entity UserSessionContext {
     loginTime Instant required
 }
 
-entity IdpSecurityGroup {
+entity LdapSecurityGroup {
     id  String required,
     shortName String required minlength(5),
     longName String required minlength(5),
@@ -101,7 +107,9 @@ relationship ManyToMany {
 }
 
 relationship OneToOne {
-  Tenant{parentTenant(name)} to Tenant
+  Tenant{parentTenant(name)} to Tenant,
+  BusinessApplicationTenant{tenant(name)} to Tenant,
+  BusinessApplicationPartner{partner(name)} to Partner
 }
 
 /* UserSecurityDetails Relationships */
@@ -115,21 +123,23 @@ relationship ManyToOne {
 }
 
 relationship ManyToMany {
-  IdpSecurityGroup {tenantSecurityGroup(name) required} to TenantSecurityGroup
+  LdapSecurityGroup {tenantSecurityGroup(shortName) required} to TenantSecurityGroup
 }
 
 /* UserSecurityDetails Relationships */
 relationship ManyToMany {
-  UserSecurityDetails{idpSecurityGroup(shortName) required} to IdpSecurityGroup
+  UserSecurityDetails{ldapSecurityGroup(shortName) required} to LdapSecurityGroup
 }
 
 relationship ManyToMany {
-  BusinessApplicationSecurityGroup{businessApplication(name) required} to BusinessApplication
+  BusinessApplicationSecurityGroup{businessApplication(name) required} to BusinessApplication,
+  BusinessApplicationPartner{businessApplication(name) required} to BusinessApplication,
+  BusinessApplicationTenant{businessApplication(name) required} to BusinessApplication
 }
 
 relationship ManyToMany {
   BusinessApplicationSecurityGroup{securityGroup(name) required} to SecurityGroup,
-  IdpSecurityGroup{businessApplicationSecurityGroup(name) required} to BusinessApplicationSecurityGroup
+  LdapSecurityGroup{businessApplicationSecurityGroup(name) required} to BusinessApplicationSecurityGroup
 }
 
 paginate all with pagination
