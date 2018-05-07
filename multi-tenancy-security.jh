@@ -66,16 +66,16 @@ entity TenantBusinessApplicationAccess (BusnAppTnt) {
 	description String required
 }
 
-/*
-*/
-entity OauthSecurityGroup {
+entity LdapSecurityGroup {
     id  String required,
     shortName String required minlength(5),
     longName String required minlength(5),
 	description String required
 }
 
-entity LdapSecurityGroup {
+/*
+*/
+entity OauthSecurityGroup {
     id  String required,
     shortName String required minlength(5),
     longName String required minlength(5),
@@ -135,8 +135,7 @@ relationship ManyToOne {
 }
 
 relationship ManyToMany {
-  UserSecurityDetails{oauthSecurityGroup(shortName)} to OauthSecurityGroup,
-  UserSecurityDetails{ldapSecurityGroup(shortName)} to LdapSecurityGroup
+  UserSecurityDetails{oauthSecurityGroup(shortName)} to OauthSecurityGroup
 }
 
 /* UserSessionContext Relationships */
