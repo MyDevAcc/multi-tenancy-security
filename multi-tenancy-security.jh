@@ -1,10 +1,10 @@
-entity BusinessApplication (BusnApp) {
+entity Project {
     id  String required,
 	name String required minlength(3),
 	description String required
 }
 
-entity ApplicationService {
+entity MicroService {
     id  String required,
 	name String required minlength(3),
 	description String required
@@ -28,7 +28,7 @@ entity SecurityGroup {
 	description String required
 }
 
-entity BusinessApplicationSecurityGroup (BusnAppSecGrp) {
+entity ProjectSecurityGroup {
     id  String required,
 	name String required minlength(3),
 	description String required
@@ -54,13 +54,13 @@ entity TenantSecurityGroup {
 	description String required
 }
 
-entity PartnerBusinessApplicationAccess (BusnAppPrt) {
+entity PartnerProjectAccess {
     id  String required,
 	name String required minlength(3),
 	description String required
 }
 
-entity TenantBusinessApplicationAccess (BusnAppTnt) {
+entity TenantProjectAccess {
     id  String required,
 	name String required minlength(3),
 	description String required
@@ -110,11 +110,11 @@ relationship ManyToOne {
 }
 
 relationship ManyToOne {
-  ApplicationService{bussinessApplication(name) required} to BusinessApplication
+  MicroService{bussinessApp(name) required} to Project
 }
 
 relationship ManyToOne {
-  SecurityPermission{applicationService(name) required} to ApplicationService
+  SecurityPermission{applicationService(name) required} to MicroService
 }
 
 /* Tenant Relationships */
@@ -125,8 +125,8 @@ relationship ManyToMany {
 
 relationship OneToOne {
   Tenant{parentTenant(name)} to Tenant,
-  TenantBusinessApplicationAccess{tenant(name)} to Tenant,
-  PartnerBusinessApplicationAccess{partner(name)} to Partner
+  TenantProjectAccess{tenant(name)} to Tenant,
+  PartnerProjectAccess{partner(name)} to Partner
 }
 
 /* UserSecurityDetails Relationships */
@@ -148,18 +148,18 @@ relationship ManyToMany {
   OauthSecurityGroup {tenantSecurityGroup(shortName) required} to TenantSecurityGroup
 }
 
-/* BusinessApplication Relationships */
+/* Project Relationships */
 
 relationship ManyToMany {
-  BusinessApplicationSecurityGroup{businessApplication(name) required} to BusinessApplication,
-  PartnerBusinessApplicationAccess{businessApplication(name) required} to BusinessApplication,
-  TenantBusinessApplicationAccess{businessApplication(name) required} to BusinessApplication
+  ProjectSecurityGroup{project(name) required} to Project,
+  PartnerProjectAccess{project(name) required} to Project,
+  TenantProjectAccess{project(name) required} to Project
 }
 
 relationship ManyToMany {
-  BusinessApplicationSecurityGroup{securityGroup(name) required} to SecurityGroup,
-  LdapSecurityGroup{businessApplicationSecurityGroup(name) required} to BusinessApplicationSecurityGroup,
-  OauthSecurityGroup{businessApplicationSecurityGroup(name) required} to BusinessApplicationSecurityGroup
+  ProjectSecurityGroup{securityurityGroup(name) required} to SecurityGroup,
+  LdapSecurityGroup{projectSecurityGroup(name) required} to ProjectSecurityGroup,
+  OauthSecurityGroup{projectSecurityGroup(name) required} to ProjectSecurityGroup
 }
 
 paginate all with pagination
