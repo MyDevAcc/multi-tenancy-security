@@ -28,12 +28,6 @@ entity SecurityGroup {
 	description String required
 }
 
-entity ProjectSecurityGroup {
-    id  String required,
-	name String required minlength(3),
-	description String required
-}
-
 entity Partner {
     id  String required,
 	name String required minlength(3),
@@ -45,13 +39,6 @@ entity Tenant {
     tenantId String required,
     name String required minlength(3),
     description String required
-}
-
-entity TenantSecurityGroup {
-    id  String required,
-    shortName String required minlength(5),
-    longName String required minlength(5),
-	description String required
 }
 
 entity PartnerProjectAccess {
@@ -66,7 +53,7 @@ entity TenantProjectAccess {
 	description String required
 }
 
-entity LdapSecurityGroup {
+entity SSOSecurityGroup {
     id  String required,
     shortName String required minlength(5),
     longName String required minlength(5),
@@ -96,30 +83,33 @@ entity UserSessionContext {
 
 /* SecurityRole Relationships */
 relationship ManyToMany {
-  SecurityRole{permissions(name) required} to SecurityPermission
+  SecurityRole{securityPermission(name) required} to SecurityPermission
 }
 
 /* SecurityGroup Relationships */
 relationship ManyToMany {
-  SecurityGroup{roles(name) required} to SecurityRole
-}
-
-/* TenantSecurityGroup Relationships */
-relationship ManyToOne {
-  TenantSecurityGroup{tenant(name) required} to Tenant
+  SecurityGroup{securityRole(name) required} to SecurityRole
 }
 
 relationship ManyToOne {
-  MicroService{bussinessApp(name) required} to Project
+  MicroService{project(name) required} to Project
 }
 
 relationship ManyToOne {
-  SecurityPermission{applicationService(name) required} to MicroService
+  SecurityPermission{microService(name) required} to MicroService
+}
+
+relationship ManyToMany {
+  SecurityRole{microService(name) required} to MicroService,
+  SecurityGroup{microService(name) required} to MicroService
 }
 
 /* Tenant Relationships */
 relationship ManyToMany {
-  Tenant{subTenants(name)} to Tenant,
+  Tenant{subTenants(name)} to Tenant
+}
+
+relationship ManyToOne {
   Tenant{partner(name) required} to Partner
 }
 
@@ -140,28 +130,28 @@ relationship ManyToMany {
 
 /* UserSessionContext Relationships */
 relationship ManyToOne {
-  UserSessionContext{user(login) required} to User
+  UserSessionContext{user(login) required} to User,
+  SSOSecurityGroup {partner(name) required} to Partner,
+  OauthSecurityGroup {partner(name) required} to Partner
 }
 
 relationship ManyToMany {
-  LdapSecurityGroup {tenantSecurityGroup(shortName) required} to TenantSecurityGroup,
-  OauthSecurityGroup {tenantSecurityGroup(shortName) required} to TenantSecurityGroup
+  SSOSecurityGroup {tenant(name) required} to Tenant,
+  OauthSecurityGroup {tenant(name) required} to Tenant
 }
 
 /* Project Relationships */
 
 relationship ManyToMany {
-  ProjectSecurityGroup{project(name) required} to Project,
   PartnerProjectAccess{project(name) required} to Project,
   TenantProjectAccess{project(name) required} to Project
 }
 
 relationship ManyToMany {
-  ProjectSecurityGroup{securityurityGroup(name) required} to SecurityGroup,
-  LdapSecurityGroup{projectSecurityGroup(name) required} to ProjectSecurityGroup,
-  OauthSecurityGroup{projectSecurityGroup(name) required} to ProjectSecurityGroup
+  SSOSecurityGroup{securityGroup(name) required} to SecurityGroup,
+  OauthSecurityGroup{securityGroup(name) required} to SecurityGroup
 }
 
 paginate all with pagination
 service all with serviceImpl
-microservice all with securityservice
+microservice all with uua
