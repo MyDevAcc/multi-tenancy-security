@@ -53,16 +53,7 @@ entity TenantProjectAccess {
 	description String required
 }
 
-entity SSOSecurityGroup {
-    id  String required,
-    shortName String required minlength(5),
-    longName String required minlength(5),
-	description String required
-}
-
-/*
-*/
-entity OauthSecurityGroup {
+entity TenantSecurityGroup {
     id  String required,
     shortName String required minlength(5),
     longName String required minlength(5),
@@ -125,19 +116,17 @@ relationship ManyToOne {
 }
 
 relationship ManyToMany {
-  UserSecurityDetails{oauthSecurityGroup(shortName)} to OauthSecurityGroup
+  UserSecurityDetails{tenantSecurityGroup(shortName)} to TenantSecurityGroup
 }
 
 /* UserSessionContext Relationships */
 relationship ManyToOne {
   UserSessionContext{user(login) required} to User,
-  SSOSecurityGroup {partner(name) required} to Partner,
-  OauthSecurityGroup {partner(name) required} to Partner
+  TenantSecurityGroup {partner(name) required} to Partner
 }
 
 relationship ManyToMany {
-  SSOSecurityGroup {tenant(name) required} to Tenant,
-  OauthSecurityGroup {tenant(name) required} to Tenant
+  TenantSecurityGroup {tenant(name) required} to Tenant
 }
 
 /* Project Relationships */
@@ -148,8 +137,7 @@ relationship ManyToMany {
 }
 
 relationship ManyToMany {
-  SSOSecurityGroup{securityGroup(name) required} to SecurityGroup,
-  OauthSecurityGroup{securityGroup(name) required} to SecurityGroup
+  TenantSecurityGroup{securityGroup(name) required} to SecurityGroup
 }
 
 paginate all with pagination
